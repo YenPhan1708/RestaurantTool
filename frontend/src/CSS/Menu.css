@@ -1,0 +1,115 @@
+.menu-page {
+    font-family: 'Segoe UI', sans-serif;
+    padding: 40px 20px;
+    margin: 0 auto;
+    background-color: #fffefc;
+    color: #1a1a1a;
+}
+
+.menu-title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 40px;
+}
+
+.menu-section {
+    margin-bottom: 60px;
+}
+
+.menu-section h2 {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    border-bottom: 1px dashed #ccc;
+    padding-bottom: 4px;
+}
+
+.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.menu-item p {
+    font-size: 18px;
+    margin: 0;
+    flex: 1;
+}
+
+.menu-item span {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 20px;
+    color: #4b4b4b;
+}
+
+.menu-item button {
+    background-color: #1a1a1a;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.menu-item button:hover {
+    background-color: #333;
+}
+
+.cart-section {
+    border: 2px dashed #ccc;
+    padding: 20px;
+    margin-top: 40px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.cart-section h3 {
+    font-size: 22px;
+    margin-bottom: 12px;
+    font-weight: 600;
+}
+
+.cart-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.cart-section li {
+    font-size: 16px;
+    margin-bottom: 6px;
+}
+
+.menu-section-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.menu-items-list {
+    flex: 1;
+    min-width: 300px;
+}
+
+.menu-section-img {
+    width: 300px;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.menu-sub {
+    color: #888;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+

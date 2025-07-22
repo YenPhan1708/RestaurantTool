@@ -1,19 +1,14 @@
-import React from 'react';
-import Header from './components/Header.jsx';
-import Sidebar from './components/Sidebar.jsx';
-import MainContent from './components/MainContent.jsx';
-import './CSS/App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import Menu from './pages/Menu';
 
-function App() {
+export default function App() {
     return (
-        <div className="app-layout">
-            <Header />
-            <div className="main-layout">
-                <Sidebar />
-                <MainContent />
-            </div>
-        </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/menu" element={<Menu />} />
+            </Routes>
+        </BrowserRouter>
     );
 }
-
-export default App;

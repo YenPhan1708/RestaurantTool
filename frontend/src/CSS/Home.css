@@ -1,0 +1,271 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Open+Sans&display=swap');
+
+:root {
+    --main-green: #3b4a2f;
+    --accent-green: #a4c639;
+    --light-green: #e8f5e9;
+    --light-beige: #EBF0E4;
+    --gray-bg: #f1f1f1;
+    --text-dark: #1c1c1c;
+    --font-header: 'Playfair Display', serif;
+    --font-body: 'Open Sans', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+}
+
+.home-container {
+    font-family: var(--font-body);
+    color: var(--text-dark);
+}
+
+/* Hero Section */
+.hero {
+    background-color: var(--main-green);
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+.hero h1 {
+    font-family: var(--font-header);
+    font-size: 3rem;
+    line-height: 1.3;
+}
+.hero p {
+    margin: 1rem 0;
+    font-size: 1.2rem;
+}
+.hero-btn {
+    background: var(--accent-green);
+    border: none;
+    padding: 0.8rem 2rem;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Menu Section */
+.menu-preview {
+    padding: 3rem 2rem;
+    background: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+}
+.menu-preview h2 {
+    font-family: var(--font-header);
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.menu-items {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.menu-card {
+    background: white;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    width: 250px;
+    text-align: center;
+}
+.menu-card h3 {
+    font-family: var(--font-header);
+}
+.menu-card span {
+    font-weight: bold;
+    display: block;
+    margin-top: 0.5rem;
+}
+
+/* Chef Section */
+.chef-section {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 3rem 2rem;
+    gap: 2rem;
+    align-items: center;
+    background: var(--light-green);
+}
+.chef-section img {
+    width: 300px;
+    border-radius: 8px;
+}
+.chef-section h2 {
+    font-family: var(--font-header);
+}
+.chef-section p {
+    font-family: var(--font-body);
+}
+.chef-section div {
+    max-width: 400px;
+}
+
+/* Features */
+.features {
+    background: var(--gray-bg);
+    display: flex;
+    justify-content: space-around;
+    padding: 2rem;
+    text-align: center;
+}
+.features h3 {
+    font-family: var(--font-header);
+}
+.features p {
+    font-size: 0.95rem;
+}
+
+/* Reservation */
+.reservation {
+    background: var(--light-beige);
+    padding: 3rem 2rem;
+    text-align: center;
+}
+.reservation h2 {
+    font-family: var(--font-header);
+    margin-bottom: 1rem;
+}
+.reservation form {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+.reservation input,
+.reservation select,
+.reservation button {
+    padding: 0.6rem;
+    font-size: 1rem;
+}
+
+/* Blog Section (Calories Energy Balance) */
+.blog-section {
+    background: white;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+.blog-section h2 {
+    font-family: var(--font-header);
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+.blog-cards {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.blog-card {
+    max-width: 300px;
+    text-align: center;
+}
+.blog-card img {
+    width: 100%;
+    border-radius: 8px;
+}
+.blog-card h4 {
+    font-family: var(--font-header);
+    font-size: 1rem;
+    margin-top: 1rem;
+}
+
+/* Footer */
+footer {
+    background: var(--main-green);
+    color: white;
+    padding: 2rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+.footer-left {
+    flex: 1;
+    min-width: 250px;
+}
+.footer-right {
+    flex: 1;
+    min-width: 250px;
+}
+.footer-right input {
+    padding: 0.5rem;
+    margin-right: 0.5rem;
+    width: 60%;
+    max-width: 250px;
+}
+.footer-right button {
+    background: var(--accent-green);
+    border: none;
+    padding: 0.5rem 1rem;
+    color: var(--text-dark);
+    cursor: pointer;
+}
+
+/* Feedback Section */
+.feedback-section {
+    background-color: var(--light-green);
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.feedback-section h2 {
+    font-family: var(--font-header);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.feedback-section p {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.feedback-section form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.feedback-section input,
+.feedback-section textarea {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: var(--font-body);
+}
+
+.feedback-section button {
+    background: var(--accent-green);
+    color: white;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.feedback-section button:hover {
+    background: #91b32e;
+}
+
