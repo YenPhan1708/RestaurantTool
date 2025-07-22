@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../firebaseService');
 
+// POST /api/reservations
 router.post('/', async (req, res) => {
     const { date, time, guests } = req.body;
 
@@ -10,10 +11,16 @@ router.post('/', async (req, res) => {
     }
 
     try {
-        const reservationRef = db.collection('reservations').doc();
-        await reservationRef.set({ date, time, guests, createdAt: new Date() });
-        res.status(201).json({ message: 'Reservation created successfully' });
+        await db.collection('reservations').add({
+            date,
+            time,
+            guests,
+            createdAt: new Date()
+        });
+
+        res.status(201).json({ message: '✅ Reservation submitted successfully' });
     } catch (error) {
+        console.error('❌ Error saving reservation:', error);
         res.status(500).json({ error: 'Failed to save reservation' });
     }
 });
