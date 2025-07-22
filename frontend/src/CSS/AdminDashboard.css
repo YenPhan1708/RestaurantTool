@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap');
+
+.admin-dashboard-container {
+    font-family: 'Playfair Display', serif;
+    background-color: #EBF0E4; /* light beige background */
+    min-height: 100vh;
+    color: #3b4a2f; /* main green text */
+    padding: 2rem;
+}
+
+.admin-dashboard-header {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.admin-dashboard-content {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+}
