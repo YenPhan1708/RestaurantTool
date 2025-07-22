@@ -1,38 +1,16 @@
-import { useState } from 'react';
-import '../CSS/Menu.css'; // Create and style accordingly
-
-const sampleMenu = [
-    {
-        category: 'Starters',
-        image: '/assets/starter.png',
-        items: [
-            { name: 'Grilled Okra and Tomatoes', price: 20 },
-            { name: 'Cucumber Salad', price: 12 },
-            { name: 'Basil Pancakes', price: 18 },
-        ],
-    },
-    {
-        category: 'Mains',
-        image: '/assets/main.png',
-        items: [
-            { name: 'Deep Sea Cod Fillet', price: 20 },
-            { name: 'Steak With Rosemary', price: 22 },
-            { name: 'Grilled Kimchi Steaks', price: 20 },
-        ],
-    },
-    {
-        category: 'Pastries & Drinks',
-        image: '/assets/dessert.png',
-        items: [
-            { name: 'Wine Pairing', price: 158 },
-            { name: 'Natural Wine Pairing', price: 168 },
-            { name: 'Whisky Flyer', price: 90 },
-        ],
-    },
-];
+import { useEffect, useState } from 'react';
+import '../CSS/Menu.css';
 
 export default function Menu() {
+    const [menuData, setMenuData] = useState([]);
     const [cart, setCart] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:5000/api/menu')
+            .then(res => res.json())
+            .then(data => setMenuData(data))
+            .catch(err => console.error('Failed to fetch menu:', err));
+    }, []);
 
     const addToCart = (item) => {
         setCart([...cart, item]);
@@ -42,7 +20,7 @@ export default function Menu() {
         <div className="menu-page">
             <h1 className="menu-title">Our Menu</h1>
 
-            {sampleMenu.map((section, index) => (
+            {menuData.map((section) => (
                 <div key={section.category} className="menu-section">
                     <h2>{section.category}</h2>
                     <p className="menu-sub">This is a section of your menu. Give your section a brief description</p>
@@ -63,10 +41,11 @@ export default function Menu() {
                 </div>
             ))}
 
-
             <div className="cart-section">
                 <h3>Your Order</h3>
-                {cart.length === 0 ? <p>No items yet</p> : (
+                {cart.length === 0 ? (
+                    <p>No items yet</p>
+                ) : (
                     <ul>
                         {cart.map((item, i) => (
                             <li key={i}>{item.name} - ${item.price}</li>
@@ -75,7 +54,5 @@ export default function Menu() {
                 )}
             </div>
         </div>
-
-
     );
 }

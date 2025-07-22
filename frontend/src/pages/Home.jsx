@@ -1,9 +1,46 @@
 import '../CSS/Home.css';
 import { useNavigate } from 'react-router-dom';
 
-
 export default function Home() {
     const navigate = useNavigate();
+
+    const handleReservation = async (e) => {
+        e.preventDefault();
+        const date = e.target[0].value;
+        const time = e.target[1].value;
+        const guests = e.target[2].value;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/reservations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date, time, guests })
+            });
+            const data = await res.json();
+            alert(data.message || 'Reservation submitted!');
+        } catch (err) {
+            alert('Failed to submit reservation.');
+        }
+    };
+
+    const handleFeedback = async (e) => {
+        e.preventDefault();
+        const name = e.target[0].value;
+        const email = e.target[1].value;
+        const message = e.target[2].value;
+
+        try {
+            const res = await fetch('http://localhost:5000/api/feedback', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, message })
+            });
+            const data = await res.json();
+            alert(data.message || 'Feedback sent!');
+        } catch (err) {
+            alert('Failed to send feedback.');
+        }
+    };
 
     return (
         <div className="home-container">
@@ -38,7 +75,6 @@ export default function Home() {
                 <button className="hero-btn" onClick={() => navigate('/menu')}>
                     View Menu
                 </button>
-
             </section>
 
             {/* Featured Chef */}
@@ -53,29 +89,29 @@ export default function Home() {
             {/* Features */}
             <section className="features">
                 <div>
-                    <img src="/assets/fish.png" alt="Preminum Quality"/>
+                    <img src="/assets/fish.png" alt="Premium Quality" />
                     <h3>Premium Quality</h3>
                     <p>Locally sourced ingredients ensure the best flavors and nutrients.</p>
                 </div>
                 <div>
-                    <img src="/assets/carrot.png" alt="Vegetables"/>
+                    <img src="/assets/carrot.png" alt="Vegetables" />
                     <h3>Seasonal Vegetables</h3>
                     <p>We rotate our menu to reflect the best produce of each season.</p>
                 </div>
                 <div>
-                    <img src="/assets/lemon.png" alt="Fresh Fruit"/>
+                    <img src="/assets/lemon.png" alt="Fresh Fruit" />
                     <h3>Fresh Fruit</h3>
                     <p>Sweet, ripe fruits enhance every meal and dessert.</p>
                 </div>
             </section>
 
-            {/* Reservation Form (moved up) */}
+            {/* Reservation Form */}
             <section className="reservation">
                 <h2>Make a Reservation</h2>
-                <form>
-                    <input type="date" />
-                    <input type="time" />
-                    <select>
+                <form onSubmit={handleReservation}>
+                    <input type="date" required />
+                    <input type="time" required />
+                    <select required>
                         <option>2 Guests</option>
                         <option>4 Guests</option>
                         <option>6 Guests</option>
@@ -84,16 +120,16 @@ export default function Home() {
                 </form>
             </section>
 
-            {/* Blog Section (Calories Energy) */}
+            {/* Blog Section */}
             <section className="blog-section">
                 <h2>Calories Energy Balance</h2>
                 <div className="blog-cards">
                     <div className="blog-card">
-                        <img src="/assets/food.png" alt="Food"/>
+                        <img src="/assets/food.png" alt="Food" />
                         <h4>Fruit and vegetables and protection against diseases</h4>
                     </div>
                     <div className="blog-card">
-                        <img src="/assets/ingredient.png" alt="Food"/>
+                        <img src="/assets/ingredient.png" alt="Food" />
                         <h4>Asparagus Spring Salad with Rocket, Goat’s Cheese</h4>
                     </div>
                 </div>
@@ -103,14 +139,13 @@ export default function Home() {
             <section className="feedback-section">
                 <h2>We value your feedback</h2>
                 <p>Let us know how we can improve your dining experience.</p>
-                <form>
+                <form onSubmit={handleFeedback}>
                     <input type="text" placeholder="Your Name" required />
                     <input type="email" placeholder="Your Email" required />
                     <textarea placeholder="Your Message" rows="4" required></textarea>
                     <button type="submit">Send Feedback</button>
                 </form>
             </section>
-
 
             {/* Footer */}
             <footer>
