@@ -42,4 +42,5 @@ coverage/
 .cache/
 .next/
 
+backend/firebase-service-account.json
 
