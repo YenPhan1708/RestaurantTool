@@ -16,6 +16,32 @@ export default function Menu() {
         setCart([...cart, item]);
     };
 
+    const handleSubmitOrder = async () => {
+        if (cart.length === 0) {
+            alert("Your cart is empty.");
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:5000/api/selections', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selectedItems: cart }),
+            });
+
+            if (response.ok) {
+                alert("Your selection has been saved!");
+                setCart([]);
+            } else {
+                const error = await response.json();
+                alert("Failed to save selection: " + error.message);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error sending selection");
+        }
+    };
+
     return (
         <div className="menu-page">
             <h1 className="menu-title">Our Menu</h1>
@@ -46,11 +72,16 @@ export default function Menu() {
                 {cart.length === 0 ? (
                     <p>No items yet</p>
                 ) : (
-                    <ul>
-                        {cart.map((item, i) => (
-                            <li key={i}>{item.name} - ${item.price}</li>
-                        ))}
-                    </ul>
+                    <>
+                        <ul>
+                            {cart.map((item, i) => (
+                                <li key={i}>{item.name} - ${item.price}</li>
+                            ))}
+                        </ul>
+                        <button onClick={handleSubmitOrder} className="hero-btn" style={{ marginTop: "1rem" }}>
+                            Submit Order
+                        </button>
+                    </>
                 )}
             </div>
         </div>
