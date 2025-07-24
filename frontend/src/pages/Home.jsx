@@ -1,8 +1,27 @@
 import '../CSS/Home.css';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export default function Home() {
     const navigate = useNavigate();
+    const [promotion, setPromotion] = useState('');
+    const [loadingPromo, setLoadingPromo] = useState(true);
+
+    useEffect(() => {
+        const fetchPromotion = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/api/gpt/generate-promo');
+                const data = await res.json();
+                setPromotion(data.promotion || "Enjoy today's chef special!");
+            } catch (err) {
+                console.error("Failed to fetch promotion:", err);
+                setPromotion("Enjoy today's chef special!");
+            } finally {
+                setLoadingPromo(false);
+            }
+        };
+        fetchPromotion();
+    }, []);
 
     const handleReservation = async (e) => {
         e.preventDefault();
@@ -49,6 +68,16 @@ export default function Home() {
                 <h1>Healthy Eating<br />is important part of lifestyle</h1>
                 <p>Discover delicious, nutritious meals crafted for your well-being.</p>
                 <button className="hero-btn">Book a Table</button>
+            </section>
+
+            {/* AI Promotion Section */}
+            <section className="promotion-section" style={{ margin: '3rem 0', padding: '1.5rem', background: '#f0fff0', borderRadius: '12px', textAlign: 'center' }}>
+                <h2 style={{ marginBottom: '1rem' }}>✨ Today's Special ✨</h2>
+                {loadingPromo ? (
+                    <p style={{ fontStyle: 'italic' }}>Loading today's promotion...</p>
+                ) : (
+                    <p style={{ fontSize: '1.1rem', fontStyle: 'italic', color: '#333' }}>{promotion}</p>
+                )}
             </section>
 
             {/* Menu Preview */}

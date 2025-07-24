@@ -269,3 +269,30 @@ footer {
     background: #91b32e;
 }
 
+/* Promotion Section (GPT-generated) */
+.promotion-section {
+    background: var(--light-green);
+    border: 2px solid var(--accent-green);
+    padding: 2.5rem 2rem;
+    margin: 3rem 2rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.promotion-section h2 {
+    font-family: var(--font-header);
+    color: var(--main-green);
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.promotion-section p {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    font-style: italic;
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
