@@ -11,9 +11,24 @@ const openai = new OpenAI({
 let cachedPromo = null;
 let lastGenerated = null;
 const CACHE_DURATION = 1000 * 30; // 1 hour
+const promoCacheByIP = {}; // { ip: { promotion, lastGenerated } }
+
 
 router.get("/generate-promo", async (req, res) => {
+    const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    // fallback if IP is an array (e.g. in 'x-forwarded-for'), take first IP
+    const clientIp = Array.isArray(ip) ? ip[0] : ip;
+
     const now = Date.now();
+
+    if (
+        promoCacheByIP[clientIp] &&
+        promoCacheByIP[clientIp].lastGenerated &&
+        (now - promoCacheByIP[clientIp].lastGenerated < CACHE_DURATION)
+    ) {
+        return res.json({ promotion: promoCacheByIP[clientIp].promotion });
+    }
+
     if (cachedPromo && lastGenerated && (now - lastGenerated < CACHE_DURATION)) {
         return res.json({ promotion: cachedPromo });
     }
@@ -21,6 +36,7 @@ router.get("/generate-promo", async (req, res) => {
     try {
         const snapshot = await db
             .collection("menuSelections")
+            .where("ip", "==", clientIp) // **make sure your documents store user IP!**
             .orderBy("timestamp", "desc")
             .limit(5)
             .get();
@@ -56,6 +72,8 @@ router.get("/generate-promo", async (req, res) => {
         // Cache it
         cachedPromo = aiText;
         lastGenerated = now;
+
+        promoCacheByIP[clientIp] = { promotion: aiText, lastGenerated: now };
 
         res.json({ promotion: aiText });
     } catch (err) {

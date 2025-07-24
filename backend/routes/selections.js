@@ -1,7 +1,6 @@
-// routes/selections.js
 const express = require('express');
 const router = express.Router();
-const db = require('../firebaseService'); // assumes Firestore is initialized
+const db = require('../firebaseService');
 
 router.post('/', async (req, res) => {
     const { selectedItems } = req.body;
@@ -11,10 +10,16 @@ router.post('/', async (req, res) => {
     }
 
     try {
+        // Get client IP
+        const ip = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const clientIp = Array.isArray(ip) ? ip[0] : ip;
+
         await db.collection('menuSelections').add({
             items: selectedItems,
             createdAt: new Date(),
+            ip: clientIp, // <-- save IP here
         });
+
         res.status(201).json({ message: 'Selection saved successfully' });
     } catch (err) {
         console.error('Error saving selection:', err);
