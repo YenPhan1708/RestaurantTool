@@ -10,7 +10,7 @@ const openai = new OpenAI({
 
 let cachedPromo = null;
 let lastGenerated = null;
-const CACHE_DURATION = 1000 * 60; // 1 hour
+const CACHE_DURATION = 1000 * 30; // 1 hour
 
 router.get("/generate-promo", async (req, res) => {
     const now = Date.now();
@@ -34,10 +34,10 @@ router.get("/generate-promo", async (req, res) => {
             }
         });
 
-        const prompt = `Write ONLY ONE short, catchy sentence promoting a restaurant special based on the following dishes: ${selections.join(", ")}. Make it sound exciting and include a simple call to action.`;
+        const prompt = `Write ONLY ONE short, catchy sentence promoting a restaurant special based on the following dishes: ${selections.join(", ")}. Make it sound exciting and include a simple call to action. DONT REPEAT YOURSELF`;
 
         const chatResponse = await openai.chat.completions.create({
-            model: "gpt-3.5-turbo",
+            model: "gpt-4",
             messages: [
                 {
                     role: "system",
