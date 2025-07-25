@@ -82,4 +82,70 @@ router.get("/generate-promo", async (req, res) => {
     }
 });
 
+router.use((req, res, next) => {
+    console.log(`🔍 GPT Route Hit: ${req.method} ${req.originalUrl}`);
+    next();
+});
+
+router.post("/admin-generate-promo", async (req, res) => {
+    const { tone = "casual", limit = 5 } = req.body;
+
+    try {
+        const snapshot = await db
+            .collection("menuSelections")
+            .orderBy("timestamp", "desc")
+            .limit(limit)
+            .get();
+
+        const allItems = [];
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (Array.isArray(data.items)) {
+                allItems.push(...data.items);
+            }
+        });
+
+        const uniqueNames = [...new Set(allItems.map(i => i.name))];
+        const uniqueIngredients = [...new Set(allItems.flatMap(i => i.ingredients || []))];
+
+        const prompt = `
+Generate a persuasive restaurant promotion based on these dishes: ${uniqueNames.join(", ")}.
+Use a ${tone} tone. 
+The promotion should:
+- Reflect the ingredients: ${uniqueIngredients.join(", ") || "N/A"}
+- Be suitable for posting online (social media) or in-store
+- Suggest a content format (e.g. short video, photo with caption, text-only post)
+Return:
+1. The promo text (1-2 sentences max)
+2. A suggested content type/format
+`;
+
+        const chatResponse = await openai.chat.completions.create({
+            model: "gpt-4",
+            messages: [
+                { role: "system", content: "You are a senior restaurant marketer helping a local brand create content." },
+                { role: "user", content: prompt }
+            ],
+            max_tokens: 200,
+        });
+
+        const responseText = chatResponse.choices[0].message.content;
+
+        // Optional: store in DB
+        await db.collection("adminPromotions").add({
+            tone,
+            selections: uniqueNames,
+            ingredients: uniqueIngredients,
+            content: responseText,
+            generatedAt: new Date()
+        });
+
+        res.json({ suggestion: responseText });
+    } catch (err) {
+        console.error("❌ Admin GPT Promo Error:", err);
+        res.status(500).json({ error: "Failed to generate admin promo" });
+    }
+});
+
+
 module.exports = router;

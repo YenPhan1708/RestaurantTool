@@ -2,9 +2,9 @@
 
 .admin-dashboard-container {
     font-family: 'Playfair Display', serif;
-    background-color: #EBF0E4; /* light beige background */
+    background-color: #EBF0E4; /* soft greenish-beige */
     min-height: 100vh;
-    color: #3b4a2f; /* main green text */
+    color: #3b4a2f; /* earthy green */
     padding: 2rem;
 }
 
@@ -12,11 +12,73 @@
     font-size: 2rem;
     margin-bottom: 1.5rem;
     font-weight: 600;
+    text-align: center;
 }
 
 .admin-dashboard-content {
-    background-color: white;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.admin-dashboard-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.admin-dashboard-btn {
+    background-color: #4a7c59;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.admin-dashboard-btn:hover {
+    background-color: #3d664a;
+}
+
+.promotion-generator {
+    margin-top: 2rem;
     padding: 1.5rem;
-    border-radius: 10px;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    background-color: #f5f9f1;
+    border-left: 5px solid #4a7c59;
+    border-radius: 8px;
+}
+
+.promotion-generator h3 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+    color: #3b4a2f;
+}
+
+.promotion-generator select {
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-family: inherit;
+    font-size: 1rem;
+    margin-left: 0.5rem;
+}
+
+.promotion-result {
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    border: 1px solid #cde2cd;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.promotion-result h4 {
+    margin-bottom: 0.5rem;
+    color: #4a7c59;
+    font-size: 1.1rem;
 }
