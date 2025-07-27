@@ -37,25 +37,31 @@ export default function AdminDashboard() {
 
     const handleFileUpload = async () => {
         if (!menuFile) return alert("Please choose a file");
+
         const reader = new FileReader();
         reader.onload = async (e) => {
             try {
-                const parsed = JSON.parse(e.target.result); // Only JSON for now
+                const parsed = JSON.parse(e.target.result); // ← parse uploaded JSON file
+
+                // Wrap parsed data in expected format: { menu: [...] }
                 const res = await fetch("http://localhost:5000/api/menu/import", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ menu: parsed })
+                    body: JSON.stringify(parsed.menu ? parsed : { menu: parsed })
                 });
+
                 const result = await res.json();
                 alert("Menu imported: " + result.message);
-                fetchMenuItems();
+                fetchMenuItems(); // Refresh menu list
             } catch (err) {
                 alert("Invalid file format or error uploading");
                 console.error(err);
             }
         };
+
         reader.readAsText(menuFile);
     };
+
 
     const handleGeneratePromotion = async () => {
         setIsGenerating(true);
