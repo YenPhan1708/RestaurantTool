@@ -82,3 +82,90 @@
     color: #4a7c59;
     font-size: 1.1rem;
 }
+
+.menu-management {
+    padding: 1.5rem;
+    margin: 1rem auto;
+    max-width: 800px;
+    text-align: center; /* center all text inside */
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Wrap the upload file + button in a container for separate styling */
+.upload-section {
+    background-color: linen; /* soft light blue, fits page colors */
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto 2rem auto;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.menu-management input[type="file"] {
+    display: block;
+    margin: 0 auto 1rem auto; /* center + space below */
+    padding: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #e3f2fd; /* light blue background */
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+}
+
+.menu-management button.admin-dashboard-btn {
+    background-color: #4a7c59; /* distinct blue color */
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.menu-management button.admin-dashboard-btn:hover {
+    background-color: #3b4a2f; /* darker blue on hover */
+}
+
+/* Menu table remains unchanged but centered */
+.menu-management table {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 700px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+/* Keep your existing table styles */
+.menu-management th,
+.menu-management td {
+    border: 1px solid #ddd;
+    padding: 0.7rem 1rem;
+}
+
+.menu-management th {
+    background-color: #4a7c59;
+    color: white;
+}
+
+.menu-management .delete-btn {
+    background-color: #e53935;
+    color: white;
+    border: none;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.menu-management .delete-btn:hover {
+    background-color: #b71c1c;
+}

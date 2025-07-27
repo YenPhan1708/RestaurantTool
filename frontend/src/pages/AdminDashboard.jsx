@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../CSS/Home.css";
 import "../CSS/AdminDashboard.css";
 
@@ -6,11 +6,60 @@ export default function AdminDashboard() {
     const [tone, setTone] = useState("casual");
     const [generatedText, setGeneratedText] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
+    const [activeSection, setActiveSection] = useState(null);
+    const [menuData, setMenuData] = useState([]); // ✅ ADD THIS LINE
+
+    // Menu state
+    const [menuItems, setMenuItems] = useState([]);
+    const [menuFile, setMenuFile] = useState(null);
+
+    useEffect(() => {
+        if (activeSection === "menu") {
+            fetchMenuItems();
+        }
+    }, [activeSection]);
+
+    const fetchMenuItems = async () => {
+        try {
+            const res = await fetch("http://localhost:5000/api/menu");
+            const data = await res.json();
+            setMenuData(data);
+        } catch (err) {
+            console.error("Failed to load menu:", err);
+        }
+    };
+
+    const handleDeleteMenuItem = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this item?")) return;
+        await fetch(`http://localhost:5000/api/menu/${id}`, { method: "DELETE" });
+        fetchMenuItems(); // Refresh list
+    };
+
+    const handleFileUpload = async () => {
+        if (!menuFile) return alert("Please choose a file");
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const parsed = JSON.parse(e.target.result); // Only JSON for now
+                const res = await fetch("http://localhost:5000/api/menu/import", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ menu: parsed })
+                });
+                const result = await res.json();
+                alert("Menu imported: " + result.message);
+                fetchMenuItems();
+            } catch (err) {
+                alert("Invalid file format or error uploading");
+                console.error(err);
+            }
+        };
+        reader.readAsText(menuFile);
+    };
 
     const handleGeneratePromotion = async () => {
         setIsGenerating(true);
         setGeneratedText("");
-
         try {
             const response = await fetch("http://localhost:5000/api/gpt/admin-generate-promo", {
                 method: "POST",
@@ -24,11 +73,7 @@ export default function AdminDashboard() {
             }
 
             const data = await response.json();
-            if (data.suggestion) {
-                setGeneratedText(data.suggestion);
-            } else {
-                setGeneratedText("No promotion suggestion received.");
-            }
+            setGeneratedText(data.suggestion || "No promotion suggestion received.");
         } catch (error) {
             console.error("Error generating promotion:", error);
             setGeneratedText("Failed to generate promotion.");
@@ -48,18 +93,77 @@ export default function AdminDashboard() {
                 <p>Manage your restaurant’s content and promotions here.</p>
 
                 <div className="admin-dashboard-buttons">
-                    <button className="admin-dashboard-btn" onClick={() => alert("Menu management coming soon")}>
+                    <button className="admin-dashboard-btn" onClick={() => setActiveSection("menu")}>
                         Manage Menu
                     </button>
-                    <button className="admin-dashboard-btn" onClick={() => alert("Reservations management coming soon")} style={{ marginLeft: "1rem" }}>
+                    <button className="admin-dashboard-btn" onClick={() => setActiveSection("reservations")} style={{ marginLeft: "1rem" }}>
                         Manage Reservations
                     </button>
-                    <button className="admin-dashboard-btn" onClick={() => alert("Orders management coming soon")} style={{ marginLeft: "1rem" }}>
+                    <button className="admin-dashboard-btn" onClick={() => setActiveSection("orders")} style={{ marginLeft: "1rem" }}>
                         View Orders
                     </button>
                 </div>
 
                 <hr />
+
+                {activeSection === "menu" && (
+                    <div className="menu-management">
+                        <h3>📋 Menu Management</h3>
+                        <div className="upload-section">
+                            <input type="file" accept=".json" onChange={(e) => setMenuFile(e.target.files[0])}/>
+                            <button onClick={handleFileUpload} className="admin-dashboard-btn">
+                                Upload Menu File
+                            </button>
+                        </div>
+
+                        <table style={{marginTop: "1rem", width: "100%", borderCollapse: "collapse"}}>
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {menuData.flatMap((categoryObj) =>
+                                categoryObj.items.map((item, index) => (
+                                    <tr key={`${categoryObj.id}-${index}`}>
+                                        <td>{item.name}</td>
+                                        <td>${item.price}</td>
+                                        <td>{categoryObj.category}</td>
+                                        <td>
+                                            <button
+                                                className="delete-btn"
+                                                onClick={() => handleDeleteItem(categoryObj.id, index)}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                            </tbody>
+
+                        </table>
+                    </div>
+                )}
+
+                {activeSection === "reservations" && (
+                    <div className="reservations-management">
+                        <h3>📅 Reservation Management</h3>
+                        <p>Coming soon (You’ll fetch from /api/reservations here)</p>
+                    </div>
+                )}
+
+                {activeSection === "orders" && (
+                    <div className="orders-management">
+                    <h3>🧾 Order Management</h3>
+                        <p>Coming soon (You’ll fetch from /api/orders here)</p>
+                    </div>
+                )}
+
+                <hr style={{ marginTop: "2rem" }} />
 
                 <div className="promotion-generator">
                     <h3>🧠 Smart Promotion Generator</h3>

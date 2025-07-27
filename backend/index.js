@@ -17,6 +17,8 @@ app.use(cors({
     credentials: true
 }));app.use(express.json()); // parse JSON request bodies
 
+app.use(express.json()); // parse JSON request bodies
+
 // Routes
 app.use('/api/menu', menuRoutes);
 app.use('/api/reservations', reservationRoutes);
