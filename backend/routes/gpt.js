@@ -125,15 +125,33 @@ router.post("/admin-generate-promo", async (req, res) => {
             Don't mention ingredients in the final output.
 
             Make the tone ${tone}.
-            Output:
-            1. The promo text
-            2. A suggested content type
+            Return the content in this structure:
+
+            1. Instagram Post:
+               - Caption (with emojis)
+               - Hashtags (trendy, food-related, discoverable)
+            
+            2. Facebook Post:
+               - Caption (engaging, slightly longer, community tone)
+               - Hashtags
+            
+            3. TikTok Idea:
+               - Hook / Video Concept
+               - Caption suggestion
+               - Hashtags
+            
+            4. X (Twitter) Post:
+               - Short & witty caption (under 280 characters)
+               - Hashtags
+            
+            Keep each part **platform-specific**, fun, and on-trend. Avoid repeating the dish list – just use it to inspire. 
+            Do **not** include the word "dishes" or "ingredients" in the output.
             `;
 
         const chatResponse = await openai.chat.completions.create({
-            model: "gpt-4",
+            model: "gpt-4o-mini",
             messages: [
-                { role: "system", content: "You are a senior restaurant marketer helping a local brand create content." },
+                { role: "system", content: "You are a senior restaurant social media assistant generating platform-tailored content." },
                 { role: "user", content: prompt }
             ],
             max_tokens: 500,
