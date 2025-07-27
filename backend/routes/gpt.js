@@ -37,7 +37,7 @@ router.get("/generate-promo", async (req, res) => {
         const snapshot = await db
             .collection("menuSelections")
             .where("ip", "==", clientIp) // **make sure your documents store user IP!**
-            .orderBy("timestamp", "desc")
+            .orderBy("createdAt", "desc")
             .limit(5)
             .get();
 
@@ -93,7 +93,7 @@ router.post("/admin-generate-promo", async (req, res) => {
     try {
         const snapshot = await db
             .collection("menuSelections")
-            .orderBy("timestamp", "desc")
+            .orderBy("createdAt", "desc")
             .limit(limit)
             .get();
 
@@ -101,24 +101,34 @@ router.post("/admin-generate-promo", async (req, res) => {
         snapshot.forEach(doc => {
             const data = doc.data();
             if (Array.isArray(data.items)) {
+                console.log("🔥 Raw items from Firestore:", data.items);
                 allItems.push(...data.items);
             }
         });
 
         const uniqueNames = [...new Set(allItems.map(i => i.name))];
-        const uniqueIngredients = [...new Set(allItems.flatMap(i => i.ingredients || []))];
+        console.log("✅ Unique dish names:", uniqueNames);
+
+        if (uniqueNames.length === 0) {
+            return res.status(400).json({ error: "No dishes found in recent selections" });
+        }
 
         const prompt = `
-Generate a persuasive restaurant promotion based on these dishes: ${uniqueNames.join(", ")}.
-Use a ${tone} tone. 
-The promotion should:
-- Reflect the ingredients: ${uniqueIngredients.join(", ") || "N/A"}
-- Be suitable for posting online (social media) or in-store
-- Suggest a content format (e.g. short video, photo with caption, text-only post)
-Return:
-1. The promo text (1-2 sentences max)
-2. A suggested content type/format
-`;
+            You're a creative social media marketer for a trendy restaurant.
+            You are creating a restaurant promotion based on the following dishes: ${uniqueNames.join(", ")}.
+            
+            Your job is to:
+            - Infer the most likely ingredients used in those dishes
+            - Write a short, catchy promotion (1–2 sentences max)
+            - Suggest the best content format (e.g. video, captioned photo, text-only post)
+            
+            Don't mention ingredients in the final output.
+
+            Make the tone ${tone}.
+            Output:
+            1. The promo text
+            2. A suggested content type
+            `;
 
         const chatResponse = await openai.chat.completions.create({
             model: "gpt-4",
@@ -126,7 +136,7 @@ Return:
                 { role: "system", content: "You are a senior restaurant marketer helping a local brand create content." },
                 { role: "user", content: prompt }
             ],
-            max_tokens: 200,
+            max_tokens: 500,
         });
 
         const responseText = chatResponse.choices[0].message.content;
@@ -135,7 +145,6 @@ Return:
         await db.collection("adminPromotions").add({
             tone,
             selections: uniqueNames,
-            ingredients: uniqueIngredients,
             content: responseText,
             generatedAt: new Date()
         });
