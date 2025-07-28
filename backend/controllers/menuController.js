@@ -61,3 +61,79 @@ exports.deleteMenuItemFromCategory = async (req, res) => {
     }
 };
 
+// In menuController.js
+exports.addMenuItemToCategory = async (req, res) => {
+    const { docId } = req.params;
+    const { name, price } = req.body;
+
+    try {
+        const docRef = db.collection('menu').doc(docId);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ error: "Category not found" });
+        }
+
+        const data = doc.data();
+        const newItem = { name, price };
+        const updatedItems = [...data.items, newItem];
+
+        await docRef.update({ items: updatedItems });
+        res.json({ message: "Item added successfully" });
+    } catch (err) {
+        console.error("Failed to add item:", err);
+        res.status(500).json({ error: "Failed to add item" });
+    }
+};
+
+exports.editMenuItemInCategory = async (req, res) => {
+    const { docId, itemIndex } = req.params;
+    const { name, price, newCategoryId } = req.body;
+
+    try {
+        const docRef = db.collection('menu').doc(docId);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ error: "Original category not found" });
+        }
+
+        const data = doc.data();
+        const item = data.items[itemIndex];
+
+        if (!item) {
+            return res.status(404).json({ error: "Item not found in original category" });
+        }
+
+        const updatedItem = { name, price };
+
+        // If category is unchanged, just update item in place
+        if (!newCategoryId || newCategoryId === docId) {
+            data.items[itemIndex] = updatedItem;
+            await docRef.update({ items: data.items });
+            return res.json({ message: "Item updated in same category" });
+        }
+
+        // Else: Move to different category
+        const newDocRef = db.collection('menu').doc(newCategoryId);
+        const newDoc = await newDocRef.get();
+
+        if (!newDoc.exists) {
+            return res.status(404).json({ error: "New category not found" });
+        }
+
+        // Remove from old
+        data.items.splice(itemIndex, 1);
+        await docRef.update({ items: data.items });
+
+        // Add to new
+        const newItems = [...newDoc.data().items, updatedItem];
+        await newDocRef.update({ items: newItems });
+
+        return res.json({ message: "Item moved and updated successfully" });
+    } catch (err) {
+        console.error("Failed to edit item:", err);
+        res.status(500).json({ error: "Failed to update item" });
+    }
+};
+

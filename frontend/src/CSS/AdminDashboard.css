@@ -139,16 +139,15 @@
 .menu-management table {
     margin: 0 auto;
     width: 100%;
-    max-width: 700px;
     border-collapse: collapse;
-    text-align: left;
+    text-align: center;
 }
 
 /* Keep your existing table styles */
 .menu-management th,
 .menu-management td {
     border: 1px solid #ddd;
-    padding: 0.7rem 1rem;
+    padding: 0.7rem 1rem 0.7rem;
 }
 
 .menu-management th {
@@ -169,3 +168,123 @@
 .menu-management .delete-btn:hover {
     background-color: #b71c1c;
 }
+
+.upload-section,
+.add-item-section,
+.edit-item-section {
+    background-color: #f1f8e9; /* soft light green for contrast */
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.add-item-section {
+    background-color: #fff8e1; /* light yellow */
+}
+
+.edit-item-section {
+    background-color: #e3f2fd; /* light blue */
+}
+
+.add-item-section input,
+.edit-item-section input,
+.add-item-section select,
+.edit-item-section select {
+    margin: 0.5rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.add-item-section button,
+.edit-item-section button {
+    background-color: #4a7c59;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.add-item-section button:hover,
+.edit-item-section button:hover {
+    background-color: #3d664a;
+}
+
+.menu-management .action_btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 3rem 1rem 3rem 1rem;
+}
+
+.menu-management .action_btn button {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+    white-space: nowrap;
+    height: 100%; /* ensures buttons don't stretch the row */
+    line-height: 1.2;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.menu-management input[type="text"],
+.menu-management input[type="number"],
+.menu-management select {
+    background-color: white;
+    color: black;
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.menu-management .action_btn button:hover {
+    background-color: #333;
+}
+.menu-management .cancel-btn {
+    background-color: #e53935;
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.menu-management .cancel-btn:hover {
+    background-color: #b71c1c;
+}
+
+.menu-management .save-btn {
+    background-color: #4a7c59;
+    color: white;
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.menu-management .save-btn:hover {
+    background-color: #3b6648;
+}
+
+
+
+
