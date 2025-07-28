@@ -285,6 +285,23 @@
     background-color: #3b6648;
 }
 
+.reservations-management table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.reservations-management th,
+.reservations-management td {
+    border: 1px solid #ddd;
+    padding: 0.7rem 1rem;
+    text-align: left;
+}
+
+.reservations-management th {
+    background-color: #4a7c59;
+    color: white;
+}
 
 
 

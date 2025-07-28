@@ -25,4 +25,17 @@ router.post('/', async (req, res) => {
     }
 });
 
+// GET /api/reservations
+router.get('/', async (req, res) => {
+    try {
+        const snapshot = await db.collection('reservations').orderBy('createdAt', 'desc').get();
+        const reservations = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        res.status(200).json(reservations);
+    } catch (error) {
+        console.error('❌ Error fetching reservations:', error);
+        res.status(500).json({ error: 'Failed to fetch reservations' });
+    }
+});
+
+
 module.exports = router;

@@ -10,24 +10,24 @@ export default function AdminDashboard() {
     const [menuData, setMenuData] = useState([]);
     const [newItem, setNewItem] = useState({ name: "", price: "", categoryId: "" });
     const [editingItem, setEditingItem] = useState(null); // { docId, itemIndex, name, price, categoryId }
-
     const [menuFile, setMenuFile] = useState(null);
+    const [reservations, setReservations] = useState([]);
 
     useEffect(() => {
-        if (activeSection === "menu") {
-            fetchMenuItems();
-        }
+        if (activeSection === "menu") fetchMenuItems();
+        else if (activeSection === "reservations") fetchReservations();
     }, [activeSection]);
 
-    const fetchMenuItems = async () => {
+    const fetchReservations = async () => {
         try {
-            const res = await fetch("http://localhost:5000/api/menu");
+            const res = await fetch("http://localhost:5000/api/reservations");
             const data = await res.json();
-            setMenuData(data);
+            setReservations(data);
         } catch (err) {
-            console.error("Failed to load menu:", err);
+            console.error("Failed to load reservations:", err);
         }
     };
+
 
     const handleDeleteMenuItemFromCategory = async (docId, itemIndex) => {
         if (!window.confirm("Delete this menu item?")) return;
@@ -282,8 +282,38 @@ export default function AdminDashboard() {
 
                 {activeSection === "reservations" && (
                     <div className="reservations-management">
-                        <h3>📅 Reservation Management</h3>
-                        <p>Coming soon (You’ll fetch from /api/reservations here)</p>
+                        {activeSection === "reservations" && (
+                            <div className="reservations-management">
+                                <h3>📅 Reservation Management</h3>
+                                <table style={{width: "100%", borderCollapse: "collapse", marginTop: "1rem"}}>
+                                    <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Guests</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {reservations.length === 0 ? (
+                                        <tr>
+                                            <td colSpan="3" style={{textAlign: "center", padding: "1rem"}}>
+                                                No reservations found.
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        reservations.map((res, index) => (
+                                            <tr key={index}>
+                                                <td>{res.date}</td>
+                                                <td>{res.time}</td>
+                                                <td>{res.guests}</td>
+                                            </tr>
+                                        ))
+                                    )}
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -294,7 +324,7 @@ export default function AdminDashboard() {
                     </div>
                 )}
 
-                <hr style={{ marginTop: "2rem" }} />
+                <hr style={{marginTop: "2rem"}}/>
 
                 <div className="promotion-generator">
                     <h3>🧠 Smart Promotion Generator</h3>
