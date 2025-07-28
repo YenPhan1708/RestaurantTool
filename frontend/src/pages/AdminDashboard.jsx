@@ -12,10 +12,14 @@ export default function AdminDashboard() {
     const [editingItem, setEditingItem] = useState(null); // { docId, itemIndex, name, price, categoryId }
     const [menuFile, setMenuFile] = useState(null);
     const [reservations, setReservations] = useState([]);
+    const [orders, setOrders] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         if (activeSection === "menu") fetchMenuItems();
         else if (activeSection === "reservations") fetchReservations();
+        else if (activeSection === "orders") fetchOrders();
     }, [activeSection]);
 
     const fetchMenuItems = async () => {
@@ -39,6 +43,22 @@ export default function AdminDashboard() {
         }
     };
 
+    // Fetch orders from the backend API
+    const fetchOrders = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch('http://localhost:5000/api/selections');
+            if (!response.ok) {
+                throw new Error('Failed to fetch orders');
+            }
+            const data = await response.json();
+            setOrders(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleDeleteMenuItemFromCategory = async (docId, itemIndex) => {
         if (!window.confirm("Delete this menu item?")) return;
@@ -331,7 +351,50 @@ export default function AdminDashboard() {
                 {activeSection === "orders" && (
                     <div className="orders-management">
                         <h3>🧾 Order Management</h3>
-                        <p>Coming soon (You’ll fetch from /api/orders here)</p>
+
+                        {loading && <p>Loading orders...</p>}
+
+                        {error && <p style={{ color: "red" }}>Error: {error}</p>}
+
+                        {!loading && !error && orders.length === 0 && <p>No orders found.</p>}
+
+                        {!loading && !error && orders.length > 0 && (
+                            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
+                                <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Items</th>
+                                    <th>Total Price</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {orders.map((order) => {
+                                    const total = order.items?.reduce((sum, item) => {
+                                        const price = parseFloat(item.price || 0);
+                                        const qty = parseInt(item.quantity || 1);
+                                        return sum + price * qty;
+                                    }, 0) || 0;
+
+                                    return (
+                                        <tr key={order.id || order._id}>
+                                            <td>{order.id || order._id}</td>
+                                            <td>
+                                                {order.items
+                                                    ? order.items.map((item, idx) => (
+                                                        <div key={idx}>
+                                                            {item.name} x {item.quantity || 1}
+                                                        </div>
+                                                    ))
+                                                    : "No items"}
+                                            </td>
+                                            <td>${total.toFixed(2)}</td>
+                                        </tr>
+                                    );
+                                })}
+                                </tbody>
+                            </table>
+                        )}
+
                     </div>
                 )}
 

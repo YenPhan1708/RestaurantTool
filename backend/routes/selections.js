@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../firebaseService');
 
+console.log("✅ selections.js loaded");
+
 router.post('/', async (req, res) => {
     const { selectedItems } = req.body;
 
@@ -26,5 +28,30 @@ router.post('/', async (req, res) => {
         res.status(500).json({ message: 'Failed to save selection' });
     }
 });
+
+router.get('/', async (req, res) => {
+    console.log("🔍 GET /api/selections called");
+    try {
+        const snapshot = await db.collection('menuSelections').orderBy('createdAt', 'desc').get();
+        console.log("📦 Firestore snapshot size:", snapshot.size);
+
+        const selections = [];
+        snapshot.forEach(doc => {
+            selections.push({ id: doc.id, ...doc.data() });
+        });
+
+        console.log("✅ Returning selections:", selections.length);
+        res.json(selections);
+    } catch (err) {
+        console.error('🔥 Error fetching selections:', err.message);
+        res.status(500).json({ message: 'Failed to fetch selections' });
+    }
+});
+
+
+router.get('/test', (req, res) => {
+    res.send('Selections test route works!');
+});
+
 
 module.exports = router;
