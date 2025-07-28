@@ -29,10 +29,18 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleDeleteMenuItem = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this item?")) return;
-        await fetch(`http://localhost:5000/api/menu/${id}`, { method: "DELETE" });
-        fetchMenuItems(); // Refresh list
+    const handleDeleteMenuItemFromCategory = async (docId, itemIndex) => {
+        if (!window.confirm("Delete this menu item?")) return;
+
+        try {
+            await fetch(`http://localhost:5000/api/menu/${docId}/item/${itemIndex}`, {
+                method: "DELETE"
+            });
+            fetchMenuItems();
+        } catch (err) {
+            console.error("Delete failed:", err);
+            alert("Could not delete item.");
+        }
     };
 
     const handleFileUpload = async () => {
@@ -141,7 +149,7 @@ export default function AdminDashboard() {
                                         <td>
                                             <button
                                                 className="delete-btn"
-                                                onClick={() => handleDeleteItem(categoryObj.id, index)}
+                                                onClick={() => handleDeleteMenuItemFromCategory(categoryObj.id, index)}
                                             >
                                                 Delete
                                             </button>

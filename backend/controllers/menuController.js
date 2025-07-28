@@ -38,14 +38,26 @@ exports.importMenu = async (req, res) => {
     }
 };
 
-// DELETE /api/menu/:id
-exports.deleteMenuItem = async (req, res) => {
-    const { id } = req.params;
+// DELETE /api/menu/:docId/item/:itemIndex
+exports.deleteMenuItemFromCategory = async (req, res) => {
+    const { docId, itemIndex } = req.params;
+
     try {
-        await db.collection('menu').doc(id).delete();
-        res.json({ message: "Deleted successfully" });
+        const docRef = db.collection('menu').doc(docId);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            return res.status(404).json({ error: "Document not found" });
+        }
+
+        const data = doc.data();
+        data.items.splice(itemIndex, 1); // remove item at index
+
+        await docRef.update({ items: data.items });
+        res.json({ message: "Item deleted from category" });
     } catch (err) {
-        console.error("Delete failed:", err);
-        res.status(500).json({ error: "Delete failed" });
+        console.error("Delete item from category failed:", err);
+        res.status(500).json({ error: "Failed to delete item" });
     }
 };
+
