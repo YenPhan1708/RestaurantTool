@@ -10,7 +10,10 @@ export default function Home() {
     useEffect(() => {
         const fetchPromotion = async () => {
             try {
-                const res = await fetch('http://localhost:5000/api/gpt/generate-promo');
+                const res = await fetch('http://localhost:5000/api/gpt/generate-promo', {
+                    method: 'GET',
+                    credentials: 'include', // 👈 required if backend has credentials: true
+                });
                 const data = await res.json();
                 setPromotion(data.promotion || "Enjoy today's chef special!");
             } catch (err) {

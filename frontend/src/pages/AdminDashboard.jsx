@@ -18,6 +18,17 @@ export default function AdminDashboard() {
         else if (activeSection === "reservations") fetchReservations();
     }, [activeSection]);
 
+    const fetchMenuItems = async () => {
+        try {
+            const res = await fetch("http://localhost:5000/api/menu");
+            const data = await res.json();
+            setMenuData(data);
+        } catch (error) {
+            console.error("Failed to fetch menu items:", error);
+        }
+    };
+
+
     const fetchReservations = async () => {
         try {
             const res = await fetch("http://localhost:5000/api/reservations");
