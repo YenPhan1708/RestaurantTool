@@ -70,11 +70,27 @@ export default function Home() {
             <section className="hero">
                 <h1>Healthy Eating<br />is important part of lifestyle</h1>
                 <p>Discover delicious, nutritious meals crafted for your well-being.</p>
-                <button className="hero-btn">Book a Table</button>
+                <button
+                    className="hero-btn"
+                    onClick={() => {
+                        const reservationSection = document.getElementById('reservation');
+                        if (reservationSection) {
+                            reservationSection.scrollIntoView({behavior: 'smooth'});
+                        }
+                    }}
+                >
+                    Book a Table
+                </button>
             </section>
 
             {/* AI Promotion Section */}
-            <section className="promotion-section" style={{ margin: '3rem 0', padding: '1.5rem', background: '#f0fff0', borderRadius: '12px', textAlign: 'center' }}>
+            <section className="promotion-section" style={{
+                margin: '3rem 0',
+                padding: '1.5rem',
+                background: '#f0fff0',
+                borderRadius: '12px',
+                textAlign: 'center'
+            }}>
                 <h2 style={{ marginBottom: '1rem' }}>✨ Today's Special ✨</h2>
                 {loadingPromo ? (
                     <p style={{ fontStyle: 'italic' }}>Loading today's promotion...</p>
@@ -138,7 +154,7 @@ export default function Home() {
             </section>
 
             {/* Reservation Form */}
-            <section className="reservation">
+            <section className="reservation" id="reservation">
                 <h2>Make a Reservation</h2>
                 <form onSubmit={handleReservation}>
                     <input type="date" required />

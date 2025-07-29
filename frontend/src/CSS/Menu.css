@@ -121,5 +121,16 @@
     font-size: 1rem;
 }
 
+.back-home-btn {
+    background-color: darkgreen;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    font-size: 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 1.5rem; /* space below */
+}
+
 
 

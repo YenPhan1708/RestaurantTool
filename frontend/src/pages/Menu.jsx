@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import '../CSS/Menu.css';
+import { useNavigate } from 'react-router-dom';  // <-- import this
 
 export default function Menu() {
     const [menuData, setMenuData] = useState([]);
     const [cart, setCart] = useState([]);
     const [dishSuggestion, setDishSuggestion] = useState('');
+    const navigate = useNavigate();  // <-- initialize navigate
 
     useEffect(() => {
         fetch('http://localhost:5000/api/menu')
@@ -64,12 +66,6 @@ export default function Menu() {
     return (
         <div className="menu-page">
             <h1 className="menu-title">Our Menu</h1>
-            {dishSuggestion && (
-                <div className="dish-suggestion">
-                    <p>{dishSuggestion}</p>
-                </div>
-            )}
-
 
             {menuData.map((section) => (
                 <div key={section.category} className="menu-section">
@@ -87,10 +83,16 @@ export default function Menu() {
                             ))}
                         </div>
 
-                        <img src={section.image} alt={section.category} className="menu-section-img" />
+                        <img src={section.image} alt={section.category} className="menu-section-img"/>
                     </div>
                 </div>
             ))}
+
+            {dishSuggestion && (
+                <div className="dish-suggestion">
+                    <p>{dishSuggestion}</p>
+                </div>
+            )}
 
             <div className="cart-section">
                 <h3>Your Order</h3>
@@ -103,12 +105,18 @@ export default function Menu() {
                                 <li key={i}>{item.name} - ${item.price}</li>
                             ))}
                         </ul>
-                        <button onClick={handleSubmitOrder} className="hero-btn" style={{ marginTop: "1rem" }}>
+                        <button onClick={handleSubmitOrder} className="hero-btn" style={{marginTop: "1rem"}}>
                             Submit Order
                         </button>
                     </>
                 )}
             </div>
+            <button
+                className="back-home-btn"
+                onClick={() => navigate('/')}
+            >
+                ← Back to Home
+            </button>
         </div>
     );
 }

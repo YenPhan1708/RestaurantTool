@@ -295,4 +295,8 @@ footer {
     margin: 0 auto;
     line-height: 1.6;
 }
+html {
+    scroll-behavior: smooth;
+}
+
 
