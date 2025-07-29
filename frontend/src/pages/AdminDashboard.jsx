@@ -9,7 +9,7 @@ export default function AdminDashboard() {
     const [tone, setTone] = useState("casual");
     const [generatedText, setGeneratedText] = useState("");
     const [isGenerating, setIsGenerating] = useState(false);
-    const [activeSection, setActiveSection] = useState(null);
+    const [activeSection, setActiveSection] = useState('menu');
     const [menuData, setMenuData] = useState([]);
     const [newItem, setNewItem] = useState({ name: "", price: "", categoryId: "" });
     const [editingItem, setEditingItem] = useState(null); // { docId, itemIndex, name, price, categoryId }
