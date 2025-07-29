@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../CSS/Home.css";
 import "../CSS/AdminDashboard.css";
 import * as XLSX from 'xlsx';
+import { marked } from "marked";
 
 export default function AdminDashboard() {
     const [tone, setTone] = useState("casual");
@@ -21,6 +22,8 @@ export default function AdminDashboard() {
     const [analyzingReservations, setAnalyzingReservations] = useState(false);
     const [orderInsight, setOrderInsight] = useState("");
     const [analyzingOrders, setAnalyzingOrders] = useState(false);
+    const [feedbackInsight, setFeedbackInsight] = useState("");
+    const [analyzingFeedback, setAnalyzingFeedback] = useState(false);
 
     useEffect(() => {
         if (activeSection === "menu") fetchMenuItems();
@@ -242,6 +245,25 @@ export default function AdminDashboard() {
 
         setAnalyzingOrders(false);
     };
+
+    const handleAnalyzeFeedback = async () => {
+        setAnalyzingFeedback(true);
+        setFeedbackInsight("");
+
+        try {
+            const res = await fetch("http://localhost:5000/api/feedback/analyze", {
+                method: "POST"
+            });
+            const data = await res.json();
+            setFeedbackInsight(data.analysis || "No analysis returned.");
+        } catch (err) {
+            console.error("Feedback analysis failed", err);
+            setFeedbackInsight("Failed to analyze feedback.");
+        }
+
+        setAnalyzingFeedback(false);
+    };
+
 
 
     return (
@@ -575,34 +597,63 @@ export default function AdminDashboard() {
                 {activeSection === "feedback" && (
                     <div className="feedback-management">
                         <h3>🗣️ User Feedback</h3>
+
                         {feedbacks.length === 0 ? (
                             <p>No feedback received.</p>
                         ) : (
-                            <table className="feedback-table">
-                                <thead>
-                                <tr>
-                                    <th style={{ textAlign: "left" }}>Name</th>
-                                    <th style={{ textAlign: "left" }}>Email</th>
-                                    <th style={{ textAlign: "left" }}>Message</th>
-                                    <th style={{ textAlign: "left" }}>Created At</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {feedbacks.map((fb, index) => (
-                                    <tr key={index}>
-                                        <td>{fb.name || "Anonymous"}</td>
-                                        <td>{fb.email || "N/A"}</td>
-                                        <td>{fb.message}</td>
-                                        <td>{formatFirestoreTimestamp(fb.createdAt)}</td>
+                            <>
+                                <table className="feedback-table">
+                                    <thead>
+                                    <tr>
+                                        <th style={{ textAlign: "left" }}>Name</th>
+                                        <th style={{ textAlign: "left" }}>Email</th>
+                                        <th style={{ textAlign: "left" }}>Message</th>
+                                        <th style={{ textAlign: "left" }}>Created At</th>
                                     </tr>
-                                ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    {feedbacks.map((fb, index) => (
+                                        <tr key={index}>
+                                            <td>{fb.name || "Anonymous"}</td>
+                                            <td>{fb.email || "N/A"}</td>
+                                            <td>{fb.message}</td>
+                                            <td>{formatFirestoreTimestamp(fb.createdAt)}</td>
+                                        </tr>
+                                    ))}
+                                    </tbody>
+                                </table>
+
+                                <hr style={{ margin: "2rem 0" }} />
+                                <h4>📊 AI Feedback Analysis</h4>
+                                <button
+                                    className="admin-dashboard-btn"
+                                    onClick={handleAnalyzeFeedback}
+                                    disabled={analyzingFeedback}
+                                >
+                                    {analyzingFeedback ? "Analyzing..." : "Analyze with AI"}
+                                </button>
+
+                                {feedbackInsight && (
+                                    <div
+                                        style={{
+                                            marginTop: "1rem",
+                                            background: "#f0f0f0",
+                                            padding: "1rem",
+                                            borderRadius: "8px",
+                                            whiteSpace: "pre-wrap"
+                                        }}
+                                        dangerouslySetInnerHTML={{
+                                            __html: feedbackInsight
+                                                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                                                .replace(/\n/g, "<br />")
+                                        }}
+                                    />
+                                )}
+                            </>
                         )}
+
                     </div>
                 )}
-
-
 
                 <hr style={{marginTop: "2rem"}}/>
 
