@@ -174,5 +174,61 @@ router.post("/admin-generate-promo", async (req, res) => {
     }
 });
 
+router.get('/suggest-dish', async (req, res) => {
+    try {
+        const snapshot = await db
+            .collection("menuSelections")
+            .orderBy("createdAt", "desc")
+            .limit(25)
+            .get();
+
+        const dishCounts = {};
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (Array.isArray(data.items)) {
+                data.items.forEach(item => {
+                    dishCounts[item.name] = (dishCounts[item.name] || 0) + 1;
+                });
+            }
+        });
+
+        const sortedDishes = Object.entries(dishCounts)
+            .sort((a, b) => b[1] - a[1])
+            .map(([name]) => name);
+
+        if (sortedDishes.length === 0) {
+            return res.json({ suggestion: "Explore today's special selections!" });
+        }
+
+        const topDishes = sortedDishes.slice(0, 5).join(", ");
+
+        const prompt = `From the following frequently ordered dishes: ${topDishes}, choose one and write a friendly suggestion like "We recommend trying X today!" or "Customers are loving Y – try it!". Keep it short and clear. Return only the suggestion sentence.`;
+
+        const chatResponse = await openai.chat.completions.create({
+            model: "gpt-4",
+            messages: [
+                {
+                    role: "system",
+                    content: "You are a helpful restaurant assistant recommending dishes to customers based on popular trends."
+                },
+                {
+                    role: "user",
+                    content: prompt
+                }
+            ],
+            max_tokens: 40,
+        });
+
+        const suggestion = chatResponse.choices[0].message.content.trim();
+        return res.json({ suggestion });
+
+    } catch (err) {
+        console.error("❌ Dish suggestion error:", err);
+        res.status(500).json({ error: "Failed to generate dish suggestion." });
+    }
+});
+
+
+
 
 module.exports = router;

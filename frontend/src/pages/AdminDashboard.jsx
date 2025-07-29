@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import "../CSS/Home.css";
 import "../CSS/AdminDashboard.css";
 import * as XLSX from 'xlsx';
-import { marked } from "marked";
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
 
 export default function AdminDashboard() {
     const [tone, setTone] = useState("casual");
@@ -638,14 +639,12 @@ export default function AdminDashboard() {
                                         style={{
                                             marginTop: "1rem",
                                             background: "#f0f0f0",
-                                            padding: "1rem",
+                                            padding: "2rem",
                                             borderRadius: "8px",
                                             whiteSpace: "pre-wrap"
                                         }}
                                         dangerouslySetInnerHTML={{
-                                            __html: feedbackInsight
-                                                .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-                                                .replace(/\n/g, "<br />")
+                                            __html: DOMPurify.sanitize(marked.parse(feedbackInsight))
                                         }}
                                     />
                                 )}

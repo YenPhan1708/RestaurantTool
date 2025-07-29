@@ -4,13 +4,32 @@ import '../CSS/Menu.css';
 export default function Menu() {
     const [menuData, setMenuData] = useState([]);
     const [cart, setCart] = useState([]);
+    const [dishSuggestion, setDishSuggestion] = useState('');
 
     useEffect(() => {
         fetch('http://localhost:5000/api/menu')
             .then(res => res.json())
             .then(data => setMenuData(data))
             .catch(err => console.error('Failed to fetch menu:', err));
-    }, []);
+
+        fetchDishSuggestion().then(suggestion => {
+            if (suggestion) setDishSuggestion(suggestion);
+        });    }, []);
+
+    const fetchDishSuggestion = async () => {
+        try {
+            const res = await fetch('http://localhost:5000/api/gpt/suggest-dish');
+            if (!res.ok) throw new Error("Failed to fetch dish suggestion");
+
+            const data = await res.json();
+            return data.suggestion; // Returns the suggestion string
+        } catch (err) {
+            console.error("❌ fetchDishSuggestion failed:", err);
+            return null;
+        }
+    };
+
+
 
     const addToCart = (item) => {
         setCart([...cart, item]);
@@ -45,6 +64,12 @@ export default function Menu() {
     return (
         <div className="menu-page">
             <h1 className="menu-title">Our Menu</h1>
+            {dishSuggestion && (
+                <div className="dish-suggestion">
+                    <p>{dishSuggestion}</p>
+                </div>
+            )}
+
 
             {menuData.map((section) => (
                 <div key={section.category} className="menu-section">
