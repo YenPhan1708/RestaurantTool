@@ -16,11 +16,13 @@ export default function AdminDashboard() {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [feedbacks, setFeedbacks] = useState([]);
 
     useEffect(() => {
         if (activeSection === "menu") fetchMenuItems();
         else if (activeSection === "reservations") fetchReservations();
         else if (activeSection === "orders") fetchOrders();
+        else if (activeSection === "feedback") fetchFeedbacks();
     }, [activeSection]);
 
     const fetchMenuItems = async () => {
@@ -60,6 +62,17 @@ export default function AdminDashboard() {
             setLoading(false);
         }
     };
+
+    const fetchFeedbacks = async () => {
+        try {
+            const res = await fetch("http://localhost:5000/api/feedback");
+            const data = await res.json();
+            setFeedbacks(data);
+        } catch (err) {
+            console.error("Failed to load feedbacks:", err);
+        }
+    };
+
 
     const exportToExcel = () => {
         const exportData = orders.map(order => {
@@ -204,15 +217,25 @@ export default function AdminDashboard() {
                     <button className="admin-dashboard-btn" onClick={() => setActiveSection("menu")}>
                         Manage Menu
                     </button>
-                    <button className="admin-dashboard-btn" onClick={() => setActiveSection("reservations")} style={{ marginLeft: "1rem" }}>
+                    <button className="admin-dashboard-btn" onClick={() => setActiveSection("reservations")}
+                            style={{marginLeft: "1rem"}}>
                         Manage Reservations
                     </button>
-                    <button className="admin-dashboard-btn" onClick={() => setActiveSection("orders")} style={{ marginLeft: "1rem" }}>
+                    <button className="admin-dashboard-btn" onClick={() => setActiveSection("orders")}
+                            style={{marginLeft: "1rem"}}>
                         View Orders
                     </button>
+                    <button
+                        className="admin-dashboard-btn"
+                        onClick={() => setActiveSection("feedback")}
+                        style={{marginLeft: "1rem"}}
+                    >
+                        View Feedback
+                    </button>
+
                 </div>
 
-                <hr />
+                <hr/>
 
                 {activeSection === "menu" && (
                     <div className="menu-management">
@@ -465,6 +488,38 @@ export default function AdminDashboard() {
                         )}
                     </div>
                 )}
+
+                {activeSection === "feedback" && (
+                    <div className="feedback-management">
+                        <h3>🗣️ User Feedback</h3>
+                        {feedbacks.length === 0 ? (
+                            <p>No feedback received.</p>
+                        ) : (
+                            <table className="feedback-table">
+                                <thead>
+                                <tr>
+                                    <th style={{ textAlign: "left" }}>Name</th>
+                                    <th style={{ textAlign: "left" }}>Email</th>
+                                    <th style={{ textAlign: "left" }}>Message</th>
+                                    <th style={{ textAlign: "left" }}>Created At</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {feedbacks.map((fb, index) => (
+                                    <tr key={index}>
+                                        <td>{fb.name || "Anonymous"}</td>
+                                        <td>{fb.email || "N/A"}</td>
+                                        <td>{fb.message}</td>
+                                        <td>{formatFirestoreTimestamp(fb.createdAt)}</td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
+                )}
+
+
 
                 <hr style={{marginTop: "2rem"}}/>
 
