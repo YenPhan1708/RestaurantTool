@@ -19,6 +19,8 @@ export default function AdminDashboard() {
     const [feedbacks, setFeedbacks] = useState([]);
     const [reservationInsight, setReservationInsight] = useState("");
     const [analyzingReservations, setAnalyzingReservations] = useState(false);
+    const [orderInsight, setOrderInsight] = useState("");
+    const [analyzingOrders, setAnalyzingOrders] = useState(false);
 
     useEffect(() => {
         if (activeSection === "menu") fetchMenuItems();
@@ -221,6 +223,24 @@ export default function AdminDashboard() {
         }
 
         setAnalyzingReservations(false);
+    };
+
+    const handleAnalyzeOrders = async () => {
+        setAnalyzingOrders(true);
+        setOrderInsight("");
+
+        try {
+            const res = await fetch("http://localhost:5000/api/selections/analyze", {
+                method: "POST"
+            });
+            const data = await res.json();
+            setOrderInsight(data.analysis || "No analysis returned.");
+        } catch (err) {
+            console.error("Order analysis failed", err);
+            setOrderInsight("Failed to analyze orders.");
+        }
+
+        setAnalyzingOrders(false);
     };
 
 
@@ -527,6 +547,28 @@ export default function AdminDashboard() {
                                 </tbody>
                             </table>
                         )}
+                        <hr style={{ margin: "2rem 0" }} />
+                        <h4>🍽 Order Insights</h4>
+                        <button
+                            className="admin-dashboard-btn"
+                            onClick={handleAnalyzeOrders}
+                            disabled={analyzingOrders}
+                        >
+                            {analyzingOrders ? "Analyzing..." : "Analyze with AI"}
+                        </button>
+
+                        {orderInsight && (
+                            <div
+                                style={{ marginTop: "1rem", background: "#f0f0f0", padding: "1rem", borderRadius: "8px" }}
+                                dangerouslySetInnerHTML={{
+                                    __html: orderInsight
+                                        .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+                                        .replace(/\n/g, "<br />")
+                                }}
+
+                            />
+                        )}
+
                     </div>
                 )}
 

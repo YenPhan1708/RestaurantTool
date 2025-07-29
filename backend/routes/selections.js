@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../firebaseService');
 const admin = require('firebase-admin');
-
+const { OpenAI } = require('openai');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 console.log("✅ selections.js loaded");
 
 router.post('/', async (req, res) => {
@@ -49,11 +50,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-
-router.get('/test', (req, res) => {
-    res.send('Selections test route works!');
-});
-
 router.delete('/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -62,6 +58,63 @@ router.delete('/:id', async (req, res) => {
     } catch (err) {
         console.error('Error deleting order:', err);
         res.status(500).json({ message: 'Failed to delete order' });
+    }
+});
+
+// AI Order Analysis - POST /api/selections/analyze
+router.post('/analyze', async (req, res) => {
+    try {
+        const snapshot = await db.collection('menuSelections').get();
+        const selections = snapshot.docs.map(doc => doc.data());
+
+        const items = [];
+        selections.forEach(sel => {
+            if (Array.isArray(sel.items)) {
+                sel.items.forEach(item => {
+                    items.push({
+                        name: item.name,
+                        quantity: item.quantity || 1
+                    });
+                });
+            }
+        });
+
+        const prompt = `
+You're a restaurant assistant AI. Based on the order data below:
+
+1. 🍽 Show the **Top Dish** (most frequently ordered)
+2. 🚀 Suggest what dish or combo to promote
+3. 💡 Recommend a new dish idea if needed
+
+Format your response like this:
+
+Top Dish: Spicy Chicken Wings  
+🚀 Promote combo deals including Spicy Chicken Wings and Fried Rice  
+💡 Introduce a new vegan bowl — many users skip vegetarian options  
+🆕 Try limited-time Garlic Butter Shrimp — seafood is underrepresented
+
+Keep it short, use new lines, and **bold only labels** (Top Dish:, Promote:, etc.)
+
+Order items:
+${JSON.stringify(items, null, 2)}
+`;
+
+
+        const chat = await openai.chat.completions.create({
+            model: "gpt-4",
+            messages: [
+                { role: "system", content: "You analyze restaurant orders and give short actionable insights." },
+                { role: "user", content: prompt }
+            ],
+            temperature: 0.5
+        });
+
+        const result = chat.choices[0]?.message?.content || "No analysis returned.";
+        res.json({ analysis: result });
+
+    } catch (err) {
+        console.error("❌ Error in AI order analysis:", err);
+        res.status(500).json({ error: "Failed to analyze order selections." });
     }
 });
 
