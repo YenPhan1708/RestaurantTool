@@ -175,6 +175,10 @@ export default function AdminDashboard() {
                 return new Date(ts).toLocaleString();
             }
 
+            if (ts._seconds) {
+                return new Date(ts._seconds * 1000).toLocaleString();
+            }
+
             if (ts.seconds) {
                 return new Date(ts.seconds * 1000).toLocaleString();
             }
@@ -185,7 +189,6 @@ export default function AdminDashboard() {
             return "Invalid Date";
         }
     };
-
 
     return (
         <div className="admin-dashboard-container">
