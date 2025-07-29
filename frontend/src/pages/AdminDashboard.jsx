@@ -17,6 +17,8 @@ export default function AdminDashboard() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [feedbacks, setFeedbacks] = useState([]);
+    const [reservationInsight, setReservationInsight] = useState("");
+    const [analyzingReservations, setAnalyzingReservations] = useState(false);
 
     useEffect(() => {
         if (activeSection === "menu") fetchMenuItems();
@@ -202,6 +204,25 @@ export default function AdminDashboard() {
             return "Invalid Date";
         }
     };
+
+    const handleAnalyzeReservations = async () => {
+        setAnalyzingReservations(true);
+        setReservationInsight("");
+
+        try {
+            const res = await fetch("http://localhost:5000/api/reservations/analyze", {
+                method: "POST"
+            });
+            const data = await res.json();
+            setReservationInsight(data.analysis || "No analysis returned.");
+        } catch (err) {
+            console.error("AI analysis failed", err);
+            setReservationInsight("Failed to analyze reservations.");
+        }
+
+        setAnalyzingReservations(false);
+    };
+
 
     return (
         <div className="admin-dashboard-container">
@@ -423,6 +444,26 @@ export default function AdminDashboard() {
                                     </tbody>
 
                                 </table>
+
+                                <hr style={{ margin: "2rem 0" }} />
+                                <h4>🔍 AI Reservation Analysis</h4>
+                                <button
+                                    className="admin-dashboard-btn"
+                                    onClick={handleAnalyzeReservations}
+                                    disabled={analyzingReservations}
+                                >
+                                    {analyzingReservations ? "Analyzing..." : "Analyze with AI"}
+                                </button>
+
+                                {reservationInsight && (
+                                    <div style={{ marginTop: "1rem", background: "#f9f9f9", padding: "1rem", borderRadius: "8px" }}>
+                                        <h5>📊 Insights:</h5>
+                                        <div
+                                            style={{whiteSpace: "pre-wrap"}}
+                                            dangerouslySetInnerHTML={{__html: reservationInsight.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}}
+                                        ></div>                                    </div>
+                                )}
+
                             </div>
                         )}
                     </div>
