@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../firebaseService');
+const admin = require('firebase-admin');
 
 console.log("✅ selections.js loaded");
 
@@ -18,7 +19,7 @@ router.post('/', async (req, res) => {
 
         await db.collection('menuSelections').add({
             items: selectedItems,
-            createdAt: new Date(),
+            createdAt: admin.firestore.FieldValue.serverTimestamp(),
             ip: clientIp, // <-- save IP here
         });
 
@@ -52,6 +53,18 @@ router.get('/', async (req, res) => {
 router.get('/test', (req, res) => {
     res.send('Selections test route works!');
 });
+
+router.delete('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        await db.collection('menuSelections').doc(id).delete();
+        res.status(200).json({ message: 'Order deleted' });
+    } catch (err) {
+        console.error('Error deleting order:', err);
+        res.status(500).json({ message: 'Failed to delete order' });
+    }
+});
+
 
 
 module.exports = router;

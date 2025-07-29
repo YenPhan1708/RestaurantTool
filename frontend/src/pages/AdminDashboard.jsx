@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../CSS/Home.css";
 import "../CSS/AdminDashboard.css";
+import * as XLSX from 'xlsx';
 
 export default function AdminDashboard() {
     const [tone, setTone] = useState("casual");
@@ -59,6 +60,39 @@ export default function AdminDashboard() {
             setLoading(false);
         }
     };
+
+    const exportToExcel = () => {
+        const exportData = orders.map(order => {
+            const total = order.items?.reduce((sum, item) => {
+                return sum + (parseFloat(item.price || 0) * parseInt(item.quantity || 1));
+            }, 0);
+
+            return {
+                OrderID: order.id,
+                Items: order.items?.map(item => `${item.name} x ${item.quantity || 1}`).join(', '),
+                Total: total.toFixed(2),
+                CreatedAt: formatFirestoreTimestamp(order.createdAt),
+                IP: order.ip || "Unknown"
+            };
+        });
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Orders");
+        XLSX.writeFile(wb, "Orders.xlsx");
+    };
+
+    const deleteOrder = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this order?")) return;
+
+        try {
+            await fetch(`http://localhost:5000/api/selections/${id}`, { method: "DELETE" });
+            setOrders(prev => prev.filter(order => order.id !== id));
+        } catch (err) {
+            console.error("Failed to delete order", err);
+        }
+    };
+
 
     const handleDeleteMenuItemFromCategory = async (docId, itemIndex) => {
         if (!window.confirm("Delete this menu item?")) return;
@@ -132,6 +166,26 @@ export default function AdminDashboard() {
         setEditingItem(null);
         fetchMenuItems();
     };
+
+    const formatFirestoreTimestamp = (ts) => {
+        try {
+            if (!ts) return "N/A";
+
+            if (typeof ts === "string" || ts instanceof Date) {
+                return new Date(ts).toLocaleString();
+            }
+
+            if (ts.seconds) {
+                return new Date(ts.seconds * 1000).toLocaleString();
+            }
+
+            return "N/A";
+        } catch (err) {
+            console.error("Invalid timestamp:", ts, err);
+            return "Invalid Date";
+        }
+    };
+
 
     return (
         <div className="admin-dashboard-container">
@@ -352,19 +406,22 @@ export default function AdminDashboard() {
                     <div className="orders-management">
                         <h3>🧾 Order Management</h3>
 
+                        <button onClick={exportToExcel} style={{ marginBottom: '1rem' }}>📥 Export to Excel</button>
+
                         {loading && <p>Loading orders...</p>}
-
                         {error && <p style={{ color: "red" }}>Error: {error}</p>}
-
                         {!loading && !error && orders.length === 0 && <p>No orders found.</p>}
 
                         {!loading && !error && orders.length > 0 && (
-                            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
+                            <table className="orders-table">
                                 <thead>
                                 <tr>
                                     <th>Order ID</th>
                                     <th>Items</th>
                                     <th>Total Price</th>
+                                    <th>Created At</th>
+                                    <th>IP Address</th>
+                                    <th>Action</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -375,26 +432,34 @@ export default function AdminDashboard() {
                                         return sum + price * qty;
                                     }, 0) || 0;
 
+
+
                                     return (
-                                        <tr key={order.id || order._id}>
-                                            <td>{order.id || order._id}</td>
+                                        <tr key={order.id}>
+                                            <td>{order.id}</td>
                                             <td>
-                                                {order.items
-                                                    ? order.items.map((item, idx) => (
-                                                        <div key={idx}>
-                                                            {item.name} x {item.quantity || 1}
-                                                        </div>
-                                                    ))
-                                                    : "No items"}
+                                                {order.items?.map((item, idx) => (
+                                                    <div key={idx}>
+                                                        {item.name} x {item.quantity || 1}
+                                                    </div>
+                                                )) || "No items"}
                                             </td>
                                             <td>${total.toFixed(2)}</td>
+                                            <td>
+                                                {order.createdAt && order.createdAt._seconds
+                                                    ? new Date(order.createdAt._seconds * 1000).toLocaleString()
+                                                    : "N/A"}
+                                            </td>
+                                            <td>{order.ip || "Unknown"}</td>
+                                            <td>
+                                                <button onClick={() => deleteOrder(order.id)}>🗑 Delete</button>
+                                            </td>
                                         </tr>
                                     );
                                 })}
                                 </tbody>
                             </table>
                         )}
-
                     </div>
                 )}
 
