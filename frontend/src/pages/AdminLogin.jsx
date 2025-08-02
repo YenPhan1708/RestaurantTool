@@ -6,14 +6,30 @@ export default function AdminLogin() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        if (username === "admin" && password === "password") {
-            window.location.href = "/admin/dashboard";
-        } else {
-            alert("Invalid credentials");
+
+        try {
+            const res = await fetch("http://localhost:5000/api/admin/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                localStorage.setItem("adminLoggedIn", "true");
+                window.location.href = "/admin/dashboard";
+            } else {
+                alert(data.message || "Login failed");
+            }
+        } catch (err) {
+            console.error("Login error:", err);
+            alert("Error logging in");
         }
     };
+
 
     return (
         <div className="admin-login-container">

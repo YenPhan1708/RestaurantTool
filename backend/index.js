@@ -25,6 +25,7 @@ app.use('/api/reservations', reservationRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/selections', selectionRoutes);
 app.use('/api/gpt', gptRouter);
+app.use('/api/admin', require('./routes/adminAuth'));
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

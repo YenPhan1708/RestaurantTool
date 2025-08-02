@@ -31,6 +31,9 @@ export default function AdminDashboard() {
         else if (activeSection === "reservations") fetchReservations();
         else if (activeSection === "orders") fetchOrders();
         else if (activeSection === "feedback") fetchFeedbacks();
+        else  if (localStorage.getItem("adminLoggedIn") !== "true") {
+            window.location.href = "/admin";
+        }
     }, [activeSection]);
 
     const fetchMenuItems = async () => {
@@ -305,13 +308,13 @@ export default function AdminDashboard() {
                     <div className="menu-management">
                         <h3>📋 Menu Management</h3>
                         <div className="upload-section">
-                            <input type="file" accept=".json" onChange={(e) => setMenuFile(e.target.files[0])} />
+                            <input type="file" accept=".json" onChange={(e) => setMenuFile(e.target.files[0])}/>
                             <button onClick={handleFileUpload} className="admin-dashboard-btn">
                                 Upload Menu File
                             </button>
                         </div>
 
-                        <table style={{ marginTop: "1rem", width: "100%" }}>
+                        <table style={{marginTop: "1rem", width: "100%"}}>
                             <thead>
                             <tr>
                                 <th>Name</th>
@@ -332,7 +335,7 @@ export default function AdminDashboard() {
                                                         type="text"
                                                         value={editingItem.name}
                                                         onChange={(e) =>
-                                                            setEditingItem({ ...editingItem, name: e.target.value })
+                                                            setEditingItem({...editingItem, name: e.target.value})
                                                         }
                                                     />
                                                 ) : (
@@ -345,7 +348,7 @@ export default function AdminDashboard() {
                                                         type="number"
                                                         value={editingItem.price}
                                                         onChange={(e) =>
-                                                            setEditingItem({ ...editingItem, price: e.target.value })
+                                                            setEditingItem({...editingItem, price: e.target.value})
                                                         }
                                                     />
                                                 ) : (
@@ -357,7 +360,7 @@ export default function AdminDashboard() {
                                                     <select
                                                         value={editingItem.categoryId}
                                                         onChange={(e) =>
-                                                            setEditingItem({ ...editingItem, categoryId: e.target.value })
+                                                            setEditingItem({...editingItem, categoryId: e.target.value})
                                                         }
                                                     >
                                                         {menuData.map((cat) => (
@@ -373,8 +376,11 @@ export default function AdminDashboard() {
                                             <td className={"action_btn"}>
                                                 {isEditing ? (
                                                     <>
-                                                        <button className={"save-btn"} onClick={handleSaveEdit}>Save</button>
-                                                        <button className="cancel-btn" onClick={() => setEditingItem(null)} style={{ marginLeft: "0.5rem" }}>
+                                                        <button className={"save-btn"} onClick={handleSaveEdit}>Save
+                                                        </button>
+                                                        <button className="cancel-btn"
+                                                                onClick={() => setEditingItem(null)}
+                                                                style={{marginLeft: "0.5rem"}}>
                                                             Cancel
                                                         </button>
                                                     </>
@@ -394,7 +400,7 @@ export default function AdminDashboard() {
                                                             Edit
                                                         </button>
                                                         <button class={"delete-btn"}
-                                                            onClick={() => handleDeleteMenuItemFromCategory(categoryObj.id, index)}
+                                                                onClick={() => handleDeleteMenuItemFromCategory(categoryObj.id, index)}
                                                         >
                                                             Delete
                                                         </button>
@@ -412,7 +418,7 @@ export default function AdminDashboard() {
                             <h4>Add New Dish</h4>
                             <select
                                 value={newItem.categoryId}
-                                onChange={(e) => setNewItem({ ...newItem, categoryId: e.target.value })}
+                                onChange={(e) => setNewItem({...newItem, categoryId: e.target.value})}
                             >
                                 <option value="">-- Select Category --</option>
                                 {menuData.map((cat) => (
@@ -425,19 +431,19 @@ export default function AdminDashboard() {
                                 type="text"
                                 placeholder="Dish Name"
                                 value={newItem.name}
-                                onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                                onChange={(e) => setNewItem({...newItem, name: e.target.value})}
                             />
                             <input
                                 type="number"
                                 placeholder="Price"
                                 value={newItem.price}
-                                onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                                onChange={(e) => setNewItem({...newItem, price: e.target.value})}
                             />
                             <button
                                 onClick={async () => {
                                     const res = await fetch(`http://localhost:5000/api/menu/${newItem.categoryId}/item`, {
                                         method: "POST",
-                                        headers: { "Content-Type": "application/json" },
+                                        headers: {"Content-Type": "application/json"},
                                         body: JSON.stringify({
                                             name: newItem.name,
                                             price: Number(newItem.price)
@@ -445,7 +451,7 @@ export default function AdminDashboard() {
                                     });
                                     const result = await res.json();
                                     alert(result.message);
-                                    setNewItem({ name: "", price: "", categoryId: "" });
+                                    setNewItem({name: "", price: "", categoryId: ""});
                                     fetchMenuItems();
                                 }}
                             >
@@ -488,7 +494,7 @@ export default function AdminDashboard() {
 
                                 </table>
 
-                                <hr style={{ margin: "2rem 0" }} />
+                                <hr style={{margin: "2rem 0"}}/>
                                 <h4>🔍 AI Reservation Analysis</h4>
                                 <button
                                     className="admin-dashboard-btn"
@@ -499,12 +505,18 @@ export default function AdminDashboard() {
                                 </button>
 
                                 {reservationInsight && (
-                                    <div style={{ marginTop: "1rem", background: "#f9f9f9", padding: "1rem", borderRadius: "8px" }}>
+                                    <div style={{
+                                        marginTop: "1rem",
+                                        background: "#f9f9f9",
+                                        padding: "1rem",
+                                        borderRadius: "8px"
+                                    }}>
                                         <h5>📊 Insights:</h5>
                                         <div
                                             style={{whiteSpace: "pre-wrap"}}
                                             dangerouslySetInnerHTML={{__html: reservationInsight.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")}}
-                                        ></div>                                    </div>
+                                        ></div>
+                                    </div>
                                 )}
 
                             </div>
@@ -516,10 +528,10 @@ export default function AdminDashboard() {
                     <div className="orders-management">
                         <h3>🧾 Order Management</h3>
 
-                        <button onClick={exportToExcel} style={{ marginBottom: '1rem' }}>📥 Export to Excel</button>
+                        <button onClick={exportToExcel} style={{marginBottom: '1rem'}}>📥 Export to Excel</button>
 
                         {loading && <p>Loading orders...</p>}
-                        {error && <p style={{ color: "red" }}>Error: {error}</p>}
+                        {error && <p style={{color: "red"}}>Error: {error}</p>}
                         {!loading && !error && orders.length === 0 && <p>No orders found.</p>}
 
                         {!loading && !error && orders.length > 0 && (
@@ -541,7 +553,6 @@ export default function AdminDashboard() {
                                         const qty = parseInt(item.quantity || 1);
                                         return sum + price * qty;
                                     }, 0) || 0;
-
 
 
                                     return (
@@ -570,7 +581,7 @@ export default function AdminDashboard() {
                                 </tbody>
                             </table>
                         )}
-                        <hr style={{ margin: "2rem 0" }} />
+                        <hr style={{margin: "2rem 0"}}/>
                         <h4>🍽 Order Insights</h4>
                         <button
                             className="admin-dashboard-btn"
@@ -582,7 +593,7 @@ export default function AdminDashboard() {
 
                         {orderInsight && (
                             <div
-                                style={{ marginTop: "1rem", background: "#f0f0f0", padding: "1rem", borderRadius: "8px" }}
+                                style={{marginTop: "1rem", background: "#f0f0f0", padding: "1rem", borderRadius: "8px"}}
                                 dangerouslySetInnerHTML={{
                                     __html: orderInsight
                                         .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
@@ -606,10 +617,10 @@ export default function AdminDashboard() {
                                 <table className="feedback-table">
                                     <thead>
                                     <tr>
-                                        <th style={{ textAlign: "left" }}>Name</th>
-                                        <th style={{ textAlign: "left" }}>Email</th>
-                                        <th style={{ textAlign: "left" }}>Message</th>
-                                        <th style={{ textAlign: "left" }}>Created At</th>
+                                        <th style={{textAlign: "left"}}>Name</th>
+                                        <th style={{textAlign: "left"}}>Email</th>
+                                        <th style={{textAlign: "left"}}>Message</th>
+                                        <th style={{textAlign: "left"}}>Created At</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -624,7 +635,7 @@ export default function AdminDashboard() {
                                     </tbody>
                                 </table>
 
-                                <hr style={{ margin: "2rem 0" }} />
+                                <hr style={{margin: "2rem 0"}}/>
                                 <h4>📊 AI Feedback Analysis</h4>
                                 <button
                                     className="admin-dashboard-btn"
@@ -667,18 +678,29 @@ export default function AdminDashboard() {
                     <button
                         className="admin-dashboard-btn"
                         onClick={handleGeneratePromotion}
-                        style={{ marginTop: "1rem" }}
+                        style={{marginTop: "1rem"}}
                         disabled={isGenerating}
                     >
                         {isGenerating ? "Generating..." : "Generate Promotion"}
                     </button>
                     {generatedText && (
-                        <div className="promotion-result" style={{ marginTop: "1rem", whiteSpace: "pre-wrap" }}>
+                        <div className="promotion-result" style={{marginTop: "1rem", whiteSpace: "pre-wrap"}}>
                             <h4>Generated Promotion:</h4>
                             <p>{generatedText}</p>
                         </div>
                     )}
                 </div>
+                <button
+                    className="admin-dashboard-btn"
+                    style={{float: "right"}}
+                    onClick={() => {
+                        localStorage.removeItem("adminLoggedIn");
+                        window.location.href = "/admin/login";
+                    }}
+                >
+                    🚪 Logout
+                </button>
+
             </section>
         </div>
     );
