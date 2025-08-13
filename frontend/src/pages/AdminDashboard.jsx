@@ -279,6 +279,16 @@ export default function AdminDashboard() {
             <section className="admin-dashboard-content">
                 <h2>Welcome, Admin</h2>
                 <p>Manage your restaurant’s content and promotions here.</p>
+                <button
+                    className="admin-dashboard-btn"
+                    style={{float: "right"}}
+                    onClick={() => {
+                        localStorage.removeItem("adminLoggedIn");
+                        window.location.href = "/admin/login";
+                    }}
+                >
+                    🚪 Logout
+                </button>
 
                 <div className="admin-dashboard-buttons">
                     <button className="admin-dashboard-btn" onClick={() => setActiveSection("menu")}>
@@ -690,17 +700,6 @@ export default function AdminDashboard() {
                         </div>
                     )}
                 </div>
-                <button
-                    className="admin-dashboard-btn"
-                    style={{float: "right"}}
-                    onClick={() => {
-                        localStorage.removeItem("adminLoggedIn");
-                        window.location.href = "/admin/login";
-                    }}
-                >
-                    🚪 Logout
-                </button>
-
             </section>
         </div>
     );
