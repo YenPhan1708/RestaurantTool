@@ -15,5 +15,10 @@
     "express": "^5.1.0",
     "firebase-admin": "^13.4.0",
     "openai": "^5.10.2"
+  },
+  "scripts": {
+    "build": "cd ../frontend && npm install && npm run build && cp -r dist ../backend/public",
+    "start": "node index.js"
   }
+
 }
